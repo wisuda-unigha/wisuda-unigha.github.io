@@ -1,113 +1,103 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Wisuda UNIGHA - Universitas Jabal Ghafur</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Wisuda UNIGHA - Universitas Jabal Ghafur</title>
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f8fafc;
-        }
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 
-        .gradient-bg {
-            background: linear-gradient(135deg, #002366 0%, #800000 100%);
-        }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-        .btn-gold {
-            background: linear-gradient(to right, #D4AF37, #F5D76E);
-            color: #002366;
-            transition: all 0.3s ease;
-        }
-
-        .btn-gold:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
-        }
-
-        .announcement-frame {
-            border: 8px solid white;
-            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.2);
-            border-radius: 1.5rem;
-            overflow: hidden;
-            background: white;
-            transition: transform 0.3s ease;
-        }
-
-        .announcement-frame:hover {
-            transform: scale(1.01);
-        }
-
-        .tag-pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+<style>
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    margin: 0;
+    padding: 0;
+}
 
 /* =========================
-   TOPBAR ADMIN (FIXED)
+   FULLSCREEN IFRAME FIX
 ========================= */
-#topbarAdmin {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 9999;
-
-  /* visual */
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.9);
+.iframe-container {
+    position: fixed;
+    inset: 0; /* top:0 right:0 bottom:0 left:0 */
+    width: 100%;
+    height: 100%;
+    background: #f8fafc;
 }
 
-#topbarAdmin {
-  transition: all 0.3s ease;
+/* iframe FULL layar */
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
-.btn-edit {
-  opacity: 0;
-  transition: 0.2s;
+/* =========================
+   LOADER
+========================= */
+.loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    z-index: 10;
+    font-weight: 600;
+    color: #002366;
 }
 
-.flex:hover .btn-edit {
-  opacity: 1;
+/* spinner */
+.loader::after {
+    content: "";
+    width: 30px;
+    height: 30px;
+    border: 4px solid #ddd;
+    border-top: 4px solid #002366;
+    border-radius: 50%;
+    margin-left: 10px;
+    animation: spin 0.8s linear infinite;
 }
 
-@keyframes scaleIn {
-    0% {
-        transform: scale(0.9);
-        opacity: 0;
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* =========================
+   MOBILE OPTIMIZATION
+========================= */
+@media (max-width: 768px) {
+    .loader {
+        font-size: 14px;
     }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
 }
-
-.animate-scaleIn {
-    animation: scaleIn 0.25s ease;
-}
-
-    </style>
+</style>
 </head>
 
 <body>
-  <div class="iframe-container">
-    <div class="loader" id="loader">Loading app...</div>
+
+<div class="iframe-container">
+    <div class="loader" id="loader">Loading aplikasi...</div>
+
     <iframe 
-      src="https://script.google.com/macros/s/AKfycbxzc7a5Lfsvf2MDdJg4uRpkGGvFWB8E5XIKYoXTQObDntszy3Y4jXuBmY3XGBJNpCOAhg/exec" 
-      title="JNCfy Web App"
-      onload="document.getElementById('loader').style.display='none';"
-      allowfullscreen>
+        src="https://script.google.com/macros/s/AKfycbxzc7a5Lfsvf2MDdJg4uRpkGGvFWB8E5XIKYoXTQObDntszy3Y4jXuBmY3XGBJNpCOAhg/exec"
+        title="Wisuda Unigha"
+        onload="hideLoader()"
+        allowfullscreen>
     </iframe>
-  </div>
+</div>
+
+<script>
+function hideLoader() {
+    const loader = document.getElementById("loader");
+    loader.style.opacity = "0";
+    setTimeout(() => loader.style.display = "none", 300);
+}
+</script>
+
 </body>
 </html>
