@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<title>Login Admin Wisuda</title>
+
+<style>
+body{
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* =========================
+   BACKGROUND (optional)
+========================= */
+.bg-animated {
+    background: linear-gradient(-45deg, #002366, #1e3a8a, #3b82f6, #ffffff);
+    background-size: 400% 400%;
+    animation: gradientMove 10s ease infinite;
+}
+
+@keyframes gradientMove {
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+/* =========================
+   IFRAME FULLSCREEN
+========================= */
+.iframe-container {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: #f8fafc;
+}
+
+/* iframe full layar */
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* =========================
+   LOADER MODERN
+========================= */
+.loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    z-index: 10;
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+/* spinner */
+.loader::after {
+    content: "";
+    width: 32px;
+    height: 32px;
+    border: 4px solid #e5e7eb;
+    border-top: 4px solid #1e3a8a;
+    border-radius: 50%;
+    margin-left: 10px;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* =========================
+   RESPONSIVE FIX
+========================= */
+
+/* HP kecil */
+@media (max-width: 480px) {
+    .loader {
+        font-size: 13px;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .loader::after {
+        margin-left: 0;
+    }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+    .loader {
+        font-size: 14px;
+    }
+}
+
+/* Desktop besar */
+@media (min-width: 1280px) {
+    iframe {
+        max-width: 100%;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="iframe-container">
+    <div class="loader" id="loader">Loading aplikasi...</div>
+
+    <iframe 
+        src="https://script.google.com/macros/s/AKfycbxzc7a5Lfsvf2MDdJg4uRpkGGvFWB8E5XIKYoXTQObDntszy3Y4jXuBmY3XGBJNpCOAhg/exec?page=oc"
+        title="Wisuda Unigha"
+        onload="hideLoader()"
+        allowfullscreen>
+    </iframe>
+</div>
+
+<script>
+function hideLoader() {
+    const loader = document.getElementById("loader");
+    loader.style.opacity = "0";
+    setTimeout(() => {
+        loader.style.display = "none";
+    }, 300);
+}
+</script>
+
+</body>
+</html>
