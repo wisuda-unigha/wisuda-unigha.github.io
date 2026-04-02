@@ -99,34 +99,6 @@
     </style>
 </head>
 
-<!-- TOPBAR ADMIN -->
-<div id="topbarAdmin" class="bg-white shadow px-4 py-3 flex justify-between items-center" style="display:none;">
-    
-    <!-- KIRI (NAMA USER) -->
-    <div class="flex items-center gap-2">
-        <i data-lucide="user"></i>
-        <span id="namaUser" class="font-semibold text-sm"></span>
-    </div>
-
-    <!-- KANAN (SETTING + LOGOUT) -->
-    <div class="flex items-center gap-4">
-
-        <!-- SETTING -->
-        <button onclick="bukaSetting()" 
-            class="text-gray-600 hover:text-blue-600 flex items-center gap-1 text-sm">
-            <i data-lucide="settings" class="w-5 h-5"></i>
-        </button>
-
-        <!-- LOGOUT -->
-        <button onclick="logout()" 
-            class="text-red-600 text-sm font-bold flex items-center gap-1">
-            <i data-lucide="log-out"></i> Keluar
-        </button>
-
-    </div>
-
-</div>
-</head>
 <body>
   <div class="iframe-container">
     <div class="loader" id="loader">Loading app...</div>
