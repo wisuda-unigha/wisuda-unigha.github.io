@@ -191,8 +191,9 @@ img[alt="QR WhatsApp"]:hover {
 <div class="hidden md:flex items-center space-x-8 text-sm font-semibold uppercase">
 
   <!-- BERANDA -->
-<a href="https://wisuda-unigha.github.io" 
+<a href="https://script.google.com/macros/s/AKfycbwiK4sqmRVuw1Fik5YsfI_HyJ3RAwMwJ1fS3OSvxARJBhjIbjcLQn4ZjGnTppT_zZH4MQ/exec?page=home" 
    onclick="localStorage.clear()" 
+   class="text-red-600 text-sm font-bold flex items-center gap-1">
    <i data-lucide="log-out"></i> Beranda
 </a>
 
@@ -524,80 +525,83 @@ document.addEventListener("DOMContentLoaded", () => {
   if (window.lucide) lucide.createIcons();
   initApp();
   initForm();
+  highlightMenu();
 });
 
 /* ==============================
    INIT UTAMA
 ============================== */
 function initApp() {
-  document.body.classList.add("loading");
-
+  checkRole();
   loadWisudaData();
+  loadSetting();
 }
 
 /* ==============================
-   LOAD DATA WISUDA (SHEET)
+   ROLE ADMIN
+============================== */
+function checkRole() {
+  const role = localStorage.getItem("role");
+  const nama = localStorage.getItem("nama") || "Admin";
+
+  if (role === "admin") {
+    document.body.classList.add("admin-mode");
+
+    const topbar = document.getElementById("topbarAdmin");
+    if (topbar) topbar.style.display = "flex";
+
+    const namaEl = document.getElementById("namaUser");
+    if (namaEl) namaEl.innerText = nama;
+  }
+}
+
+/* ==============================
+   LOAD DATA WISUDA
 ============================== */
 function loadWisudaData() {
-  if (!google || !google.script) {
-    console.warn("Mode HTML biasa (bukan GAS)");
-    setDefaultUI();
-    return;
-  }
-
   google.script.run
-    .withSuccessHandler((res) => {
-      console.log("DATA SHEET:", res);
-      updateWisudaUI(res);
-      document.body.classList.remove("loading");
-    })
-    .withFailureHandler((err) => {
-      console.error("ERROR:", err);
-      setDefaultUI();
-      document.body.classList.remove("loading");
-    })
+    .withSuccessHandler(updateWisudaUI)
     .getDataWisuda();
 }
 
-/* ==============================
-   UPDATE UI DARI SHEET
-============================== */
 function updateWisudaUI(data) {
-  if (!data) return setDefaultUI();
+  if (!data) return;
 
-  // Judul
   document.getElementById("judulWisuda").innerText =
     `Pendaftaran Wisuda Unigha Ke-${data.angkatan || "-"}`;
 
-  // Deskripsi
-  document.getElementById("deskripsiWisuda").innerText =
-    data.deskripsi || "Silakan lengkapi formulir pendaftaran wisuda.";
+  if (data.deskripsi)
+    document.getElementById("deskripsiWisuda").innerText = data.deskripsi;
 
-  // Batas
-  document.getElementById("batasPendaftaran").innerText =
-    "Batas Pendaftaran: " + formatTanggal(data.batas);
+  if (data.batas)
+    document.getElementById("batasPendaftaran").innerText =
+      "Batas Pendaftaran: " + formatTanggal(data.batas);
 }
 
 /* ==============================
-   DEFAULT UI (JIKA GAGAL LOAD)
+   LOAD SETTING
 ============================== */
-function setDefaultUI() {
+function loadSetting() {
+  google.script.run
+    .withSuccessHandler(updateSettingUI)
+    .getSetting();
+}
+
+function updateSettingUI(data) {
+  if (!data) return;
+
   document.getElementById("judulWisuda").innerText =
-    "Pendaftaran Wisuda Unigha";
+    `Pendaftaran Wisuda Unigha Ke-${data.angkatan || "-"}`;
 
-  document.getElementById("deskripsiWisuda").innerText =
-    "Silakan lengkapi formulir pendaftaran.";
-
-  document.getElementById("batasPendaftaran").innerText =
-    "Batas Pendaftaran: -";
+  if (data.batas)
+    document.getElementById("batasPendaftaran").innerText =
+      "Batas Pendaftaran: " + formatTanggal(data.batas);
 }
 
 /* ==============================
    FORMAT TANGGAL
 ============================== */
 function formatTanggal(tgl) {
-  if (!tgl) return "-";
-
   const bulan = [
     "Januari","Februari","Maret","April","Mei","Juni",
     "Juli","Agustus","September","Oktober","November","Desember"
@@ -617,8 +621,16 @@ function goToStep(step) {
   const tabs = ['step1-tab','step2-tab','step3-tab'];
 
   sections.forEach((id, i) => {
-    document.getElementById(id).classList.toggle("hidden", i+1 !== step);
-    document.getElementById(tabs[i]).classList.toggle("step-active", i+1 === step);
+    const el = document.getElementById(id);
+    const tab = document.getElementById(tabs[i]);
+
+    if (i + 1 === step) {
+      el.classList.remove("hidden");
+      tab.classList.add("step-active");
+    } else {
+      el.classList.add("hidden");
+      tab.classList.remove("step-active");
+    }
   });
 
   if (step === 3) generateReview();
@@ -627,35 +639,41 @@ function goToStep(step) {
 /* ==============================
    REVIEW DATA
 ============================== */
+ 
 function generateReview() {
-  const form = document.getElementById("graduationForm");
-  const data = Object.fromEntries(new FormData(form));
+    const form = document.getElementById("graduationForm");
+    const data = Object.fromEntries(new FormData(form));
 
-  const labels = {
-    nama: "Nama Lengkap",
-    nim: "NPM",
-    email: "Email",
-    wa: "WhatsApp",
-    fakultas: "Fakultas",
-    prodi: "Program Studi",
-    ipk: "IPK"
-  };
+    const labels = {
+        nama: "Nama Lengkap",
+        nim: "NPM",
+        email: "Email",
+        wa: "WhatsApp",
+        fakultas: "Fakultas",
+        prodi: "Program Studi",
+        ipk: "IPK"
+    };
 
-  let html = "";
+    let html = "";
 
-  Object.keys(labels).forEach(key => {
-    html += `
-    <div class="bg-white p-3 rounded-lg border shadow-sm">
-      <p class="text-xs text-gray-400">${labels[key]}</p>
-      <p class="text-blue-900 font-semibold">${data[key] || "-"}</p>
-    </div>`;
-  });
+    Object.keys(labels).forEach(key => {
+        html += `
+        <div class="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">
+                ${labels[key]}
+            </p>
+            <p class="text-blue-900 font-semibold text-sm break-words">
+                ${data[key] || "-"}
+            </p>
+        </div>`;
+    });
 
-  document.getElementById("reviewData").innerHTML = html;
+    document.getElementById("reviewData").innerHTML = html;
 }
+ 
 
 /* ==============================
-   SUBMIT FORM
+   FORM SUBMIT (FIX - 1X SAJA)
 ============================== */
 function initForm() {
   const form = document.getElementById("graduationForm");
@@ -673,21 +691,19 @@ function initForm() {
 
     const data = Object.fromEntries(new FormData(form));
 
-    if (!google || !google.script) {
-      alert("Mode demo (tidak terhubung ke server)");
-      return;
-    }
-
     google.script.run
       .withSuccessHandler(res => {
+
         if (res.status === "success") {
           document.getElementById("formContainer").classList.add("hidden");
           document.getElementById("successMessage").classList.remove("hidden");
           window.scrollTo({top:100, behavior:"smooth"});
-        } else {
-          alert(res.message);
+        } 
+        else {
+          alert("❌ " + res.message);
           reset();
         }
+
       })
       .withFailureHandler(() => {
         alert("Server error!");
@@ -699,6 +715,25 @@ function initForm() {
       btn.disabled = false;
       loader.classList.add("hidden");
       text.innerText = "Kirim Pendaftaran";
+    }
+
+  });
+}
+
+/* ==============================
+   MENU AKTIF
+============================== */
+function highlightMenu() {
+  const page = new URLSearchParams(location.search).get("page") || "home";
+
+  document.querySelectorAll(".menu-link").forEach(link => {
+    const href = new URL(link.href);
+    const p = href.searchParams.get("page");
+
+    if (p === page) {
+      link.classList.add("text-yellow-500");
+    } else {
+      link.classList.remove("text-yellow-500");
     }
   });
 }
@@ -714,6 +749,34 @@ function closeKontakAlert(){
   document.getElementById("kontakAlert").classList.add("hidden");
 }
 </script>
-    
+
+<script>
+function formatIPK(el){
+    let val = el.value;
+
+    // hanya angka & titik
+    val = val.replace(/[^0-9.]/g, "");
+
+    // hanya boleh 1 titik
+    let parts = val.split(".");
+    if (parts.length > 2) {
+        val = parts[0] + "." + parts[1];
+        parts = val.split(".");
+    }
+
+    // batasi 1 digit sebelum titik
+    if (parts[0]) {
+        parts[0] = parts[0].slice(0,1);
+    }
+
+    // batasi 2 digit setelah titik
+    if (parts[1]) {
+        parts[1] = parts[1].slice(0,2);
+    }
+
+    // gabungkan kembali
+    el.value = parts.join(".");
+}
+</script>
 </body>
 </html>
