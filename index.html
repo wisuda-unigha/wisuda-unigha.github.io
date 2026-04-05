@@ -1,817 +1,103 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Wisuda Unigha</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Wisuda UNIGHA - Universitas Jabal Ghafur</title>
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f8fafc;
-        }
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 
-        .gradient-bg {
-            background: linear-gradient(135deg, #002366 0%, #800000 100%);
-        }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-        .btn-gold {
-            background: linear-gradient(to right, #D4AF37, #F5D76E);
-            color: #002366;
-            transition: all 0.3s ease;
-        }
-
-        .btn-gold:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
-        }
-
-        .announcement-frame {
-            border: 8px solid white;
-            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.2);
-            border-radius: 1.5rem;
-            overflow: hidden;
-            background: white;
-            transition: transform 0.3s ease;
-        }
-
-        .announcement-frame:hover {
-            transform: scale(1.01);
-        }
-
-        .tag-pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+<style>
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    margin: 0;
+    padding: 0;
+}
 
 /* =========================
-   TOPBAR ADMIN (FIXED)
+   FULLSCREEN IFRAME FIX
 ========================= */
-#topbarAdmin {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 9999;
-
-  /* visual */
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.9);
+.iframe-container {
+    position: fixed;
+    inset: 0; /* top:0 right:0 bottom:0 left:0 */
+    width: 100%;
+    height: 100%;
+    background: #f8fafc;
 }
 
-#topbarAdmin {
-  transition: all 0.3s ease;
+/* iframe FULL layar */
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
-.btn-edit {
-  opacity: 0;
-  transition: 0.2s;
-}
-
-.flex:hover .btn-edit {
-  opacity: 1;
-}
-
-@keyframes scaleIn {
-    0% {
-        transform: scale(0.9);
-        opacity: 0;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-.animate-scaleIn {
-    animation: scaleIn 0.25s ease;
-}
-
-.card-stat {
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(10px);
-    border-radius: 18px;
-    padding: 18px 12px;
-    border: 1px solid rgba(255,255,255,0.15);
-    transition: all 0.3s ease;
-}
-
-.mini-stat {
-    background: rgba(255,255,255,0.12);
-    padding: 6px 12px;
-    border-radius: 999px;
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.15);
+/* =========================
+   LOADER
+========================= */
+.loader {
+    position: absolute;
+    inset: 0;
     display: flex;
-    gap: 6px;
     align-items: center;
-    transition: 0.2s;
-}
-
-/* ANGKA */
-.mini-stat span {
+    justify-content: center;
+    background: white;
+    z-index: 10;
     font-weight: 600;
+    color: #002366;
 }
 
-/* HOVER HALUS */
-.mini-stat:hover {
-    background: rgba(255,255,255,0.2);
+/* spinner */
+.loader::after {
+    content: "";
+    width: 30px;
+    height: 30px;
+    border: 4px solid #ddd;
+    border-top: 4px solid #002366;
+    border-radius: 50%;
+    margin-left: 10px;
+    animation: spin 0.8s linear infinite;
 }
 
-/* BUTTON */
-.btn-gold {
-    background: linear-gradient(135deg, #facc15, #f59e0b);
-    color: #000;
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
-.btn-gold:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+/* =========================
+   MOBILE OPTIMIZATION
+========================= */
+@media (max-width: 768px) {
+    .loader {
+        font-size: 14px;
+    }
 }
-
-    </style>
+</style>
 </head>
 
-<!-- TOPBAR ADMIN -->
-<div id="topbarAdmin" class="bg-white shadow px-4 py-3 flex justify-between items-center" style="display:none;">
-    
-    <!-- KIRI (NAMA USER) -->
-    <div class="flex items-center gap-2">
-        <i data-lucide="user"></i>
-        <span id="namaUser" class="font-semibold text-sm"></span>
-    </div>
+<body>
 
-    <!-- KANAN (SETTING + LOGOUT) -->
-    <div class="flex items-center gap-4">
+<div class="iframe-container">
+    <div class="loader" id="loader">Loading aplikasi...</div>
 
-        <!-- SETTING -->
-        <button onclick="bukaSetting()" 
-            class="text-gray-600 hover:text-blue-600 flex items-center gap-1 text-sm">
-            <i data-lucide="settings" class="w-5 h-5"></i>
-        </button>
-
-        <!-- LOGOUT -->
-<a href="https://script.google.com/macros/s/AKfycbwiK4sqmRVuw1Fik5YsfI_HyJ3RAwMwJ1fS3OSvxARJBhjIbjcLQn4ZjGnTppT_zZH4MQ/exec?page=home" 
-   onclick="localStorage.clear()" 
-   class="text-red-600 text-sm font-bold flex items-center gap-1">
-   <i data-lucide="log-out"></i> Keluar
-</a>
-
-    </div>
-
+    <iframe 
+        src="https://script.google.com/macros/s/AKfycbxzc7a5Lfsvf2MDdJg4uRpkGGvFWB8E5XIKYoXTQObDntszy3Y4jXuBmY3XGBJNpCOAhg/exec?page=home"
+        title="Wisuda Unigha"
+        onload="hideLoader()"
+        allowfullscreen>
+    </iframe>
 </div>
 
-<body class="text-gray-800 antialiased">
-
-<!-- MODAL SETTING PREMIUM -->
-<div id="modalSetting" class="fixed inset-0 z-50 hidden">
-
-    <!-- BACKDROP -->
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-
-    <!-- MODAL BOX -->
-    <div class="relative flex items-center justify-center min-h-screen px-4">
-
-        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 md:p-8 animate-scaleIn">
-
-            <!-- HEADER -->
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="settings" class="text-blue-900"></i>
-                    <h3 class="font-bold text-xl text-blue-950">Setting Wisuda</h3>
-                </div>
-                <button onclick="tutupSetting()" class="text-gray-400 hover:text-red-500">
-                    <i data-lucide="x"></i>
-                </button>
-            </div>
-
-            <!-- FORM -->
-            <div class="space-y-4">
-
-                <!-- ANGKATAN -->
-                <div>
-                    <label class="text-sm font-semibold text-gray-600">Wisuda Unigha Ke-</label>
-                    <input type="text" id="inputAngkatan"
-                        class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-900 outline-none"
-                        placeholder="Contoh: XXXIII atau 33">
-                </div>
-
-                <!-- JADWAL -->
-                <div>
-                    <label class="text-sm font-semibold text-gray-600">Jadwal Pelaksanaan</label>
-                    <input type="date" id="inputJadwal"
-                        class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-900 outline-none">
-                </div>
-
-                <!-- BATAS -->
-                <div>
-                    <label class="text-sm font-semibold text-gray-600">Batas Pendaftaran</label>
-                    <input type="date" id="inputBatas"
-                        class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-900 outline-none">
-                </div>
-
-                <!-- LOKASI -->
-                <div>
-                    <label class="text-sm font-semibold text-gray-600">Lokasi Acara</label>
-                    <input type="text" id="inputLokasi"
-                        class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-900 outline-none"
-                        placeholder="Masukkan lokasi acara">
-                </div>
-
-            </div>
-
-            <!-- FOOTER -->
-            <div class="mt-8 flex justify-end gap-3">
-                <button onclick="tutupSetting()"
-                    class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-sm">
-                    Batal
-                </button>
-
-                <button onclick="simpanSetting()"
-                    class="px-5 py-2 rounded-lg bg-blue-900 text-white hover:bg-blue-800 shadow-md text-sm font-semibold">
-                    💾 Simpan
-                </button>
-            </div>
-
-        </div>
-    </div>
-
-</div>
-
-<!-- MODAL UPLOAD FOTO -->
-<div id="modalUpload" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-
-    <div class="bg-white p-6 rounded-xl w-full max-w-md">
-        <h3 class="font-bold mb-4">Upload Gambar</h3>
-
-        <input type="file" id="inputGambar" accept="image/*,application/pdf" class="mb-3">
-
-        <img id="previewGambar" class="hidden w-full mb-3 rounded-lg"/>
-
-<iframe id="previewPDF" class="hidden w-full h-64 mb-3 border rounded-lg"></iframe>
-
-        <div class="flex justify-end gap-2">
-            <button onclick="tutupUpload()">Batal</button>
-            <button onclick="simpanGambar()">Simpan</button>
-        </div>
-    </div>
-
-</div>
-
-<!-- HERO SECTION -->
-<section class="gradient-bg text-white text-center py-20 md:py-28 px-4">
-    <div class="max-w-5xl mx-auto">
-        
-        <!-- JUDUL -->
-        <h2 id="judulWisuda" class="text-3xl md:text-5xl font-bold mb-6 leading-tight"></h2>
-
-        <!-- DESKRIPSI -->
-        <p class="text-base md:text-lg opacity-90 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Selamat atas pencapaian akademik Anda. Segera daftarkan diri untuk mengikuti prosesi pengukuhan kelulusan Universitas Jabal Ghafur.
-        </p>
-
-        <!-- BUTTON -->
-        <div class="flex justify-center mb-12">
-            <a href="https://script.google.com/macros/s/AKfycbwiK4sqmRVuw1Fik5YsfI_HyJ3RAwMwJ1fS3OSvxARJBhjIbjcLQn4ZjGnTppT_zZH4MQ/exec?page=beranda" 
-               onclick="goBeranda()"
-               class="btn-gold px-10 py-4 rounded-xl font-bold shadow-xl flex items-center gap-3 text-sm md:text-base transition-all duration-300">
-                
-                <i data-lucide="user-plus" class="w-5 h-5"></i> 
-                Daftar Wisuda Sekarang
-            </a>
-        </div>
-
-       
-
-    </div>
-</section>
-
-    <!-- KEY DATES INFO -->
-<section class="max-w-6xl mx-auto px-4 -mt-8 md:-mt-10 mb-12 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-
-    <!-- CARD 1 -->
-<div class="bg-white p-5 md:p-6 rounded-2xl shadow-xl border-t-4 border-blue-900 flex items-center gap-4">
-
-    <div class="bg-blue-50 p-3 rounded-full text-blue-900 shrink-0">
-        <i data-lucide="calendar"></i>
-    </div>
-
-    <div class="flex flex-col">
-        <p class="text-[10px] md:text-xs uppercase font-bold text-gray-400">
-            Jadwal Pelaksanaan
-        </p>
-
-        <!-- TEXT + EDIT INLINE -->
-        <div class="flex items-center gap-2">
-            <h3 id="jadwalText" class="font-bold text-base md:text-lg text-blue-950">
-          
-            </h3>
-
-
-        </div>
-    </div>
-
-</div>
-
-    <!-- CARD 2 -->
-    <div class="relative bg-white p-5 md:p-6 rounded-2xl shadow-xl border-t-4 border-red-800 flex items-center gap-4">
-        
-        <button onclick="editItem('lokasi')" 
-            class="btn-edit hidden absolute top-3 right-3 text-gray-400 hover:text-red-600">
-            <i data-lucide="edit" class="w-4 h-4"></i>
-        </button>
-
-        <div class="bg-red-50 p-3 rounded-full text-red-800 shrink-0">
-            <i data-lucide="map-pin"></i>
-        </div>
-        <div>
-            <p class="text-[10px] md:text-xs uppercase font-bold text-gray-400">Lokasi Acara</p>
-            <h3 id="lokasiText" class="font-bold text-base md:text-lg text-blue-950"></h3>
-        </div>
-    </div>
-
-    <!-- CARD 3 -->
-    <div class="relative bg-white p-5 md:p-6 rounded-2xl shadow-xl border-t-4 border-yellow-500 flex items-center gap-4">
-        
-        <button onclick="editItem('batas')" 
-            class="btn-edit hidden absolute top-3 right-3 text-gray-400 hover:text-yellow-600">
-            <i data-lucide="edit" class="w-4 h-4"></i>
-        </button>
-
-        <div class="bg-yellow-50 p-3 rounded-full text-yellow-600 shrink-0">
-            <i data-lucide="clock"></i>
-        </div>
-        <div>
-            <p class="text-[10px] md:text-xs uppercase font-bold text-gray-400">Batas Pendaftaran</p>
-            <h3 id="batasText" class="font-bold text-base md:text-lg text-blue-950"></h3>
-        </div>
-    </div>
-
-</section>
-
-    <!-- PENGUMUMAN (BOX BESAR VIEW LANGSUNG) -->
-    <section id="pengumuman" class="max-w-5xl mx-auto px-4 py-8 md:py-12 text-center">
-        <div class="mb-10">
-            <span class="bg-red-100 text-red-800 text-[10px] md:text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest tag-pulse mb-3 inline-block italic">Informasi Terbaru</span>
-            <h2 class="text-3xl md:text-4xl font-extrabold text-blue-950 tracking-tight">E-Pengumuman Wisuda</h2>
-            <div class="h-1 w-20 bg-red-800 mx-auto mt-4 rounded-full"></div>
-        </div>
-
-
-
-
-        <!-- Box Gambar Besar 1 -->
-        <div class="announcement-frame mb-8">
-<img id="gambarPengumuman" class="w-full h-auto block">
-<iframe id="pdfPengumuman" class="w-full h-[500px] hidden"></iframe>
-
-<img id="gambarPengumuman" onclick="window.open(this.src,'_blank')" 
-     class="w-full h-auto block cursor-pointer">
-   
-<div class="flex gap-4 items-center">
-
-    <!-- TOMBOL EDIT (ADMIN) -->
-<button id="btnEdit" onclick="editPengumuman()" 
-    class="hidden text-yellow-600 text-xs font-bold hover:underline flex items-center gap-1">
-    <i data-lucide="edit" class="w-4 h-4"></i> Edit
-</button>
-
-    <button onclick="window.print()" class="text-blue-900 text-xs font-bold hover:underline flex items-center gap-1">
-        <i data-lucide="printer" class="w-4 h-4"></i> Cetak
-    </button>
-
-</div>
-            </div>
-        </div>
-
-
-    </section>
-
-    <!-- SYARAT SECTION (3 CEKLIST SEJAJAR) -->
-    <section id="syarat" class="bg-white py-12 md:py-16 px-4 border-y border-gray-100">
-        <div class="max-w-5xl mx-auto">
-            <h2 class="text-2xl font-bold text-blue-950 mb-8 flex items-center justify-center md:justify-start gap-2">
-                <i data-lucide="list-checks" class="text-red-800"></i> Syarat Utama
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="flex items-center gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                    <div class="bg-green-100 p-2 rounded-full shrink-0">
-                        <i data-lucide="check-circle" class="text-green-600 w-5 h-5"></i>
-                    </div>
-                    <p class="text-sm font-semibold text-gray-700">Sudah Yudisium (Dinyatakan Lulus)</p>
-                </div>
-                <div class="flex items-center gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                    <div class="bg-green-100 p-2 rounded-full shrink-0">
-                        <i data-lucide="check-circle" class="text-green-600 w-5 h-5"></i>
-                    </div>
-                    <p class="text-sm font-semibold text-gray-700">Lunas Biaya Administrasi Wisuda</p>
-                </div>
-                <div class="flex items-center gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                    <div class="bg-green-100 p-2 rounded-full shrink-0">
-                        <i data-lucide="check-circle" class="text-green-600 w-5 h-5"></i>
-                    </div>
-                    <p class="text-sm font-semibold text-gray-700">Mengisi Formulir Pendaftaran Online</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CALL TO ACTION -->
-    <section class="text-center py-16 md:py-24 bg-gray-50 px-4">
-        <h3 class="text-2xl md:text-3xl font-bold text-blue-950 mb-3 tracking-tight">Sudah Siap Melangkah?</h3>
-        <p class="text-gray-500 mb-10 max-w-lg mx-auto text-sm md:text-base">Pastikan data yang Anda isi benar dan sesuai dokumen asli.</p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-<a href="https://script.google.com/macros/s/AKfycbwiK4sqmRVuw1Fik5YsfI_HyJ3RAwMwJ1fS3OSvxARJBhjIbjcLQn4ZjGnTppT_zZH4MQ/exec?page=beranda" onclick="goBeranda()"
-   class="btn-gold px-8 md:px-10 py-4 rounded-lg font-bold shadow-lg flex items-center justify-center gap-2 text-sm md:text-base">
-    
-    <i data-lucide="user-plus" class="w-5 h-5"></i> 
-    Daftar Wisuda Sekarang
-
-</a>
-            </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="bg-blue-950 text-white pt-16 pb-8 px-4">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
-            <div class="text-center md:text-left">
-<div class="flex items-center justify-center md:justify-start gap-2 mb-6">
-    <!-- Ganti ikon dengan logo UNIGHA -->
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2IUXOqXIFSLTHQc7nvhAARtPi1vD4bzjQwQ&s" alt="Logo UNIGHA" class="w-8 h-8 object-contain">
-    
-    <span class="font-bold text-2xl uppercase tracking-tighter text-white">
-        Universitas Jabal Ghafur
-    </span>
-</div>
-                <p class="text-sm text-gray-400 max-w-sm mx-auto md:mx-0 leading-relaxed">Berkomitmen mencetak lulusan unggul yang religius dan profesional.</p>
-            </div>
-            <div class="text-center md:text-right">
-                <h4 class="font-bold text-lg mb-6">Pusat Layanan</h4>
-                <div class="space-y-3 text-sm text-gray-400">
-                    <p class="flex items-center justify-center md:justify-end gap-2">
-                        <span>Jl. Gle Gapui, Sigli, Pidie, Aceh</span> <i data-lucide="map-pin" class="w-4 h-4"></i>
-                    </p>
-                    <p class="flex items-center justify-center md:justify-end gap-2">
-                        <span>unigha.2020@gmail.com</span> <i data-lucide="mail" class="w-4 h-4"></i>
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="max-w-6xl mx-auto border-t border-white/10 pt-8 text-center px-4">
-            <p class="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest">© 2026 Wisuda - Universitas Jabal Ghafur.</p>
-        </div>
-    </footer>
-
-<!-- ============================= -->
-<!-- SCRIPT UTAMA (FIX FINAL) -->
-<!-- ============================= -->
 <script>
-if (window.lucide) lucide.createIcons();
-
-// ==============================
-// INIT (SATU PINTU - PENTING)
-// ==============================
-document.addEventListener("DOMContentLoaded", () => {
-    initApp();
-});
-
-function initApp() {
-    setRole();
-    loadData();
-    loadPengumuman(); // 🔥 WAJIB
-    loadStatistik(); // <- HARUS ADA
-    loadTotalPeserta();  // 🔥 Load tabel rincian nama
-
+function hideLoader() {
+    const loader = document.getElementById("loader");
+    loader.style.opacity = "0";
+    setTimeout(() => loader.style.display = "none", 300);
 }
-
-
-// ==============================
-// ROLE ADMIN
-// ==============================
-function setRole() {
-    const role = localStorage.getItem("role");
-    const nama = localStorage.getItem("nama") || "Admin";
-
-    if (role === "admin") {
-        document.getElementById("topbarAdmin").style.display = "flex";
-        document.getElementById("btnEdit").classList.remove("hidden");
-        document.getElementById("namaUser").innerText = nama;
-    }
-}
-
-
-// ==============================
-// MODAL
-// ==============================
-function bukaSetting() {
-    document.getElementById("modalSetting").classList.remove("hidden");
-    loadData(); // refresh dari sheet
-}
-
-function tutupSetting() {
-    document.getElementById("modalSetting").classList.add("hidden");
-}
-
-
-// ==============================
-// FORMAT TANGGAL INPUT
-// ==============================
-function toInputDate(tgl) {
-    const d = new Date(tgl);
-    if (isNaN(d)) return "";
-    return d.toISOString().split("T")[0];
-}
-
-
-// ==============================
-// 🔥 AMBIL DATA DARI SHEET
-// ==============================
-function loadData() {
-    google.script.run
-        .withSuccessHandler((data) => {
-
-            console.log("DATA DARI SHEET:", data);
-
-            if (!data) return;
-
-            updateUI(data);
-            setForm(data);
-
-        })
-        .withFailureHandler((err) => {
-            console.error("ERROR:", err);
-        })
-        .getSetting();
-}
-
-
-
-// ==============================
-// SET FORM (MODAL)
-// ==============================
-function setForm(data) {
-    if (!document.getElementById("inputAngkatan")) return;
-
-    document.getElementById("inputAngkatan").value = data.angkatan || "";
-    document.getElementById("inputJadwal").value   = toInputDate(data.jadwal);
-    document.getElementById("inputBatas").value    = toInputDate(data.batas);
-    document.getElementById("inputLokasi").value   = data.lokasi || "";
-}
-
-
-// ==============================
-// FORMAT TANGGAL TAMPIL
-// ==============================
-function formatTanggal(tgl) {
-    if (!tgl) return "-";
-
-    const bulan = [
-        "Januari","Februari","Maret","April","Mei","Juni",
-        "Juli","Agustus","September","Oktober","November","Desember"
-    ];
-
-    const d = new Date(tgl);
-    if (isNaN(d)) return tgl;
-
-    return `${d.getDate()} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
-}
-
-
-// ==============================
-// UPDATE UI (SUMBER UTAMA)
-// ==============================
-function updateUI(data) {
-
-    document.getElementById("judulWisuda").innerText =
-        `Pendaftaran Wisuda Unigha Ke-${data.angkatan || "-"}`;
-
-    document.getElementById("jadwalText").innerText =
-        formatTanggal(data.jadwal);
-
-    document.getElementById("batasText").innerText =
-        formatTanggal(data.batas);
-
-    document.getElementById("lokasiText").innerText =
-        data.lokasi || "-";
-
-if (data.gambar && data.gambar.urlView) {
-    tampilkanFile(data.gambar);
-}
-}
-
-function getFileType(url) {
-    if (url.includes(".pdf")) return "application/pdf";
-    return "image/*";
-}
-
-
-// ==============================
-// 🔥 SIMPAN KE SHEET (ANTI HILANG)
-// ==============================
-function simpanSetting() {
-
-    const angkatan = document.getElementById("inputAngkatan").value;
-    const jadwal   = document.getElementById("inputJadwal").value;
-    const batas    = document.getElementById("inputBatas").value;
-    const lokasi   = document.getElementById("inputLokasi").value;
-
-    if (!angkatan || !jadwal || !batas || !lokasi) {
-        alert("Semua field wajib diisi!");
-        return;
-    }
-
-    google.script.run
-        .withSuccessHandler(() => {
-            alert("Berhasil disimpan!");
-
-            // 🔥 WAJIB: ambil ulang dari sheet
-            loadData();
-
-            tutupSetting();
-        })
-        .simpanSetting(angkatan, jadwal, batas, lokasi);
-}
-
-
-// ==============================
-// PREVIEW FILE
-// ==============================
-document.getElementById("inputGambar")?.addEventListener("change", function(e) {
-
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = function(event) {
-        const result = event.target.result;
-
-        const img = document.getElementById("previewGambar");
-        const pdf = document.getElementById("previewPDF");
-
-        img.classList.add("hidden");
-        pdf.classList.add("hidden");
-
-        if (file.type.startsWith("image/")) {
-            img.src = result;
-            img.classList.remove("hidden");
-        } else if (file.type === "application/pdf") {
-            pdf.src = result;
-            pdf.classList.remove("hidden");
-        }
-    };
-
-    reader.readAsDataURL(file);
-});
-
-
-// ==============================
-// UPLOAD FILE
-// ==============================
-function simpanGambar() {
-
-    const file = document.getElementById("inputGambar").files[0];
-
-    if (!file) {
-        alert("Pilih file dulu!");
-        return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = function(e) {
-
-        const base64 = e.target.result.split(",")[1];
-
-        google.script.run
-            .withSuccessHandler(function(res) {
-
-                console.log("UPLOAD RESULT:", res);
-
-                // 🔥 TAMPILKAN LANGSUNG
-                tampilkanFile(res);
-
-                // 🔥 WAJIB: SIMPAN KE SHEET
-                google.script.run
-                    .withSuccessHandler(() => {
-                        console.log("Gambar berhasil disimpan ke Sheet");
-                    })
-                    .simpanGambarKeSheet(res);
-
-                alert("Upload berhasil!");
-                tutupUpload();
-
-            })
-            .uploadFile(base64, file.name, file.type);
-    };
-
-    reader.readAsDataURL(file);
-}
-
-
-function getFilesFromFolder() {
-  const folder = DriveApp.getFolderById(CONFIG.FOLDER_FOTO);
-  const files = folder.getFiles();
-
-  const list = [];
-
-  while (files.hasNext()) {
-    const file = files.next();
-    const id = file.getId();
-
-    list.push({
-      urlView: "https://drive.google.com/uc?export=view&id=" + id,
-      urlEmbed: "https://drive.google.com/file/d/" + id + "/preview",
-      tipe: file.getMimeType()
-    });
-  }
-
-  return list;
-}
-
-
-// ==============================
-// BUKA MODAL UPLOAD (EDIT PENGUMUMAN)
-// ==============================
-function editPengumuman() {
-    document.getElementById("modalUpload").classList.remove("hidden");
-}
-
-function tutupUpload() {
-    document.getElementById("modalUpload").classList.add("hidden");
-
-    // reset input
-    document.getElementById("inputGambar").value = "";
-    document.getElementById("previewGambar").classList.add("hidden");
-    document.getElementById("previewPDF").classList.add("hidden");
-}
-
-
-function editPengumuman() {
-    document.getElementById("modalUpload").classList.remove("hidden");
-}
-
-function tutupUpload() {
-    document.getElementById("modalUpload").classList.add("hidden");
-}
-
-function tampilkanFile(res) {
-
-    const img = document.getElementById("gambarPengumuman");
-    const pdf = document.getElementById("pdfPengumuman");
-
-    img.classList.add("hidden");
-    pdf.classList.add("hidden");
-
-    if (!res || !res.tipe) {
-        console.log("DATA FILE INVALID:", res);
-        return;
-    }
-
-    console.log("TAMPIL FILE:", res);
-
-    if (res.tipe.includes("pdf")) {
-        pdf.src = res.urlEmbed;
-        pdf.classList.remove("hidden");
-    } else {
-        img.src = res.urlView;
-        img.classList.remove("hidden");
-    }
-}
-
-function logout() {
-    // Bersihkan session / localStorage
-    localStorage.clear();
-
-    // Pilihan 1: reload halaman sekarang
-    // location.reload();
-
-    // Pilihan 2: kembali ke halaman utama
-    window.location.href = "https://script.google.com/macros/s/AKfycbxspDVIhTPHmTYUNWzO197Ul9W6cwwX5YK0UVyvLpIFU6ghA51BO0coVp6VHwsiPDJbvA/exec"; // ganti "/" dengan URL beranda situs
-
-    // Pilihan 3: kembali ke halaman login
-    // window.location.href = "?page=login";
-}
-
- 
-function goBeranda(){
-    window.location.href = "?page=beranda";
-}
- 
-    
 </script>
-
-
-
 
 </body>
 </html>
