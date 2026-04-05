@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function autoRedirect(){
   if(localStorage.getItem("role") === "admin"){
     // 🔥 langsung lompat tanpa bisa back
-    window.top.location.replace(BASE_URL + "?page=admin");
+    window.top.location.replace(BASE_URL + "/admin.html");
   }
 }
 
