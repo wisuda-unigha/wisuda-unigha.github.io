@@ -79,29 +79,23 @@ body{
 </div>
 
 <script>
-
 const BASE_URL = "https://wisuda-unigha.github.io";
 
-
-// ================= INIT =================
+/* ================= INIT ================= */
 document.addEventListener("DOMContentLoaded", () => {
   autoRedirect();
   initEvent();
 });
 
-
-// ================= AUTO REDIRECT =================
+/* ================= AUTO REDIRECT ================= */
 function autoRedirect(){
   if(localStorage.getItem("role") === "admin"){
-    // 🔥 langsung lompat tanpa bisa back
-    window.top.location.replace(BASE_URL + "/admin.html");
+    window.location.replace(BASE_URL + "/admin.html");
   }
 }
 
-
-// ================= EVENT =================
+/* ================= EVENT ================= */
 function initEvent(){
-
   const btn = document.getElementById("btnLogin");
 
   btn.addEventListener("click", login);
@@ -109,11 +103,9 @@ function initEvent(){
   document.addEventListener("keydown", function(e){
     if(e.key === "Enter") login();
   });
-
 }
 
-
-// ================= LOGIN =================
+/* ================= LOGIN ================= */
 function login(){
 
   const user = document.getElementById("username").value.trim();
@@ -128,20 +120,21 @@ function login(){
     return;
   }
 
-  // loading state
   btn.innerText = "Memproses...";
   btn.disabled = true;
 
   setTimeout(() => {
 
-    // AUTH SEMENTARA
+    // 🔥 AUTH (sementara hardcode)
     if(user === "salim" && pass === "oomcie"){
 
       localStorage.setItem("role","admin");
       localStorage.setItem("nama","Admin Wisuda");
 
-      // 🔥 redirect aman (tidak bisa back)
-      window.top.location.replace(BASE_URL + "/admin.html");
+      // simpan waktu login (opsional security)
+      localStorage.setItem("loginTime", Date.now());
+
+      window.location.replace(BASE_URL + "/admin.html");
 
     } else {
 
@@ -151,10 +144,8 @@ function login(){
 
     }
 
-  }, 500); // biar smooth
-
+  }, 500);
 }
-
 </script>
 
 </body>
