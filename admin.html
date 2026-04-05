@@ -444,6 +444,37 @@
         </div>
     </footer>
 
+
+
+<script>
+const BASE_URL = "https://wisuda-unigha.github.io";
+
+/* ================= CEK LOGIN ================= */
+(function(){
+
+  const role = localStorage.getItem("role");
+
+  // ❌ kalau belum login → lempar ke login
+  if(role !== "admin"){
+    window.location.replace(BASE_URL + "/login.html");
+    return;
+  }
+
+  // 🔐 OPTIONAL: auto logout setelah 2 jam
+  const loginTime = localStorage.getItem("loginTime");
+  if(loginTime){
+    const now = Date.now();
+    const maxSession = 2 * 60 * 60 * 1000; // 2 jam
+
+    if(now - loginTime > maxSession){
+      localStorage.clear();
+      window.location.replace(BASE_URL + "/login.html");
+    }
+  }
+
+})();
+</script>
+    
 <!-- ============================= -->
 <!-- SCRIPT UTAMA (FIX FINAL) -->
 <!-- ============================= -->
